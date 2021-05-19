@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\LogoutController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,12 +20,18 @@ use App\Http\Controllers\Auth\LoginController;
 |
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('home')->middleware('auth');
-Route::get('/posts', [PostController::class, 'index'])->name('posts')->middleware('auth');
+Route::middleware('auth')->group(function(){
+	Route::get('/', [HomeController::class, 'index'])->name('home');
+	Route::get('/posts', [PostController::class, 'index'])->name('posts');
+	Route::post('/posts', [PostController::class, 'store'])->name('posts.add');
+	Route::get('/logout', LogoutController::class)->name('logout');
+});
 
-Route::get('/login', [LoginController::class, 'signin'])->name('login');
-Route::get('/regsiter', [LoginController::class, 'signup'])->name('regsiter');
-Route::get('/logout', [LoginController::class, 'signout'])->name('logout');
+Route::get('/login', [LoginController::class, 'index'])->name('login');
+Route::get('/register', [RegisterController::class, 'index'])->name('register');
+
+Route::post('/login', [LoginController::class, 'store'])->name('login.add');
+Route::post('/register', [RegisterController::class, 'store'])->name('register.add')->middleware('v_register');
 
 Route::fallback(function(){
 	return view('errors.404');
