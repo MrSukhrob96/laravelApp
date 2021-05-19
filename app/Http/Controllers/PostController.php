@@ -9,15 +9,15 @@ class PostController extends Controller
 {
     public function index()
 	{
-		$posts = Post::all();
+		$posts = Post::get();
 		return view('posts.index', compact('posts'));
 	}
 	
 	public function store(Request $request)
 	{
-		$request()->user()->posts()->create($request->only('body'));
+		$request->user()->posts()->create($request->only('body'));
 		
-		return redirect()->route();
+		return redirect()->back()->with('success', 'Post added successfuly!');
 	}
 	
 }
