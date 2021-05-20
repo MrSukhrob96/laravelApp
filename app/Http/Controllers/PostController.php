@@ -9,7 +9,7 @@ class PostController extends Controller
 {
     public function index()
 	{
-		$posts = Post::get();
+		$posts = Post::with("user", "likes")->paginate(5);
 		return view('posts.index', compact('posts'));
 	}
 	
@@ -19,5 +19,11 @@ class PostController extends Controller
 		
 		return redirect()->back()->with('success', 'Post added successfuly!');
 	}
+	
+	public function destroy(Post $post, Request $request)
+	{
+		$post->where('id', $post->id)->delete();
+		return back();
+	}	
 	
 }
